@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Wishlist - ShopEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #f5f5f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .wishlist-card { background: white; border-radius: 15px; padding: 1rem; text-align: center; transition: all 0.3s; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .wishlist-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .empty-wishlist { text-align: center; padding: 4rem; background: white; border-radius: 20px; }
+        .product-image { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; }
+        .product-image i { font-size: 3rem; color: #667eea; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/" style="font-size: 1.8rem;">🛍️ ShopEase</a>
+            <a href="/" class="btn btn-outline-light"><i class="fas fa-home"></i> Back to Home</a>
+        </div>
+    </nav>
+    
+    <div class="container py-5">
+        <h1 class="mb-4"><i class="fas fa-heart"></i> My Wishlist</h1>
+        
+        <div th:if="${wishlistItems.isEmpty()}" class="empty-wishlist">
+            <i class="fas fa-heart" style="font-size: 5rem; color: #ccc;"></i>
+            <h3 class="mt-3">Your wishlist is empty</h3>
+            <p>Save your favorite items here!</p>
+            <a href="/" class="btn btn-primary mt-3"><i class="fas fa-shopping-bag"></i> Explore Products</a>
+        </div>
+        
+        <div class="row" th:if="not ${wishlistItems.isEmpty()}">
+            <div class="col-md-3 mb-4" th:each="item : ${wishlistItems}">
+                <div class="wishlist-card">
+                    <div class="product-image">
+                        <img th:src="${item.product.imageUrl}" th:alt="${item.product.name}" onerror="this.src='https://placehold.co/300x200'; this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-box\'></i>'">
+                    </div>
+                    <h6 class="mt-2" th:text="${item.product.name}">Product Name</h6>
+                    <small class="text-muted" th:text="${item.product.brand}">Brand</small>
+                    <p class="text-primary h5 mt-2">₹<span th:text="${item.product.price}">0</span></p>
+                    <button class="btn btn-primary btn-sm w-100 add-to-cart" th:data-id="${item.product.id}" th:data-name="${item.product.name}">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                    <a th:href="'/wishlist/remove/' + ${item.id}" class="btn btn-danger btn-sm w-100 mt-2" onclick="return confirm('Remove from wishlist?')">
+                        <i class="fas fa-trash"></i> Remove
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $('.add-to-cart').click(function() {
+            let productId = $(this).data('id');
+            let productName = $(this).data('name');
+            $.post('/cart/add', {productId: productId, quantity: 1}, function(response) {
+                if(response.success) {
+                    alert(productName + ' added to cart!');
+                } else {
+                    alert('Please login to add to cart');
+                }
+            }).fail(function() {
+                alert('Please login to add to cart');
+            });
+        });
+    </script>
+</body>
+</html>

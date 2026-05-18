@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEase - Your One-Stop Shopping Destination</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #f5f5f5; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
+        .navbar-brand { font-size: 1.8rem; font-weight: 800; color: white !important; }
+        .navbar-brand span { color: #ffd700; }
+        .search-bar { width: 400px; position: relative; }
+        .search-bar input { border-radius: 50px; border: none; padding: 0.7rem 1.2rem; width: 100%; font-size: 0.9rem; }
+        .search-bar button { position: absolute; right: 5px; top: 5px; border-radius: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 0.4rem 1.2rem; transition: all 0.3s; }
+        .search-bar button:hover { transform: scale(1.05); }
+        .nav-icons { display: flex; gap: 1.2rem; align-items: center; }
+        .nav-icons a { color: white; text-decoration: none; transition: all 0.3s; font-size: 1.1rem; position: relative; }
+        .nav-icons a:hover { transform: translateY(-3px); color: #ffd700; }
+        .cart-count, .wishlist-count { position: absolute; top: -8px; right: -12px; background: #ff4757; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; min-width: 18px; text-align: center; }
+        .dropdown-menu { border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: none; margin-top: 10px; }
+        .dropdown-item { padding: 10px 20px; transition: all 0.3s; }
+        .dropdown-item i { width: 25px; margin-right: 10px; }
+        .dropdown-item:hover { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 500px; display: flex; align-items: center; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200') center/cover; opacity: 0.1; }
+        .hero-content { color: white; z-index: 2; position: relative; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; animation: slideInLeft 0.8s ease; }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+        .btn-shop { background: #ffd700; color: #333; padding: 12px 30px; border-radius: 50px; font-weight: bold; transition: transform 0.3s; }
+        .btn-shop:hover { transform: translateY(-3px); background: #ffed4a; }
+        .category-section { padding: 4rem 0; background: white; }
+        .section-title { text-align: center; margin-bottom: 3rem; font-weight: 700; font-size: 2rem; position: relative; }
+        .section-title:after { content: ''; display: block; width: 80px; height: 4px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 15px auto; border-radius: 5px; }
+        .category-card { text-align: center; padding: 1.5rem; transition: all 0.3s; cursor: pointer; border-radius: 15px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .category-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .category-icon { width: 90px; height: 90px; margin: 0 auto 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .category-icon i { font-size: 2.5rem; color: white; }
+        .category-card:hover .category-icon { transform: scale(1.1); }
+        .product-card { background: white; border-radius: 15px; overflow: hidden; transition: all 0.3s; margin-bottom: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: relative; }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .product-image { position: relative; overflow: hidden; height: 250px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .product-card:hover .product-image img { transform: scale(1.1); }
+        .product-actions { position: absolute; top: 10px; right: 10px; opacity: 0; transition: opacity 0.3s; display: flex; flex-direction: column; gap: 8px; }
+        .product-card:hover .product-actions { opacity: 1; }
+        .product-actions button { background: white; border: none; border-radius: 50%; width: 38px; height: 38px; transition: all 0.3s; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .product-actions button:hover { background: #667eea; color: white; transform: scale(1.1); }
+        .discount-badge { position: absolute; top: 10px; left: 10px; background: #ff4757; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .product-info { padding: 1.2rem; }
+        .product-brand { color: #999; font-size: 0.8rem; margin-bottom: 5px; }
+        .product-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; height: 40px; overflow: hidden; }
+        .product-price { color: #667eea; font-weight: 800; font-size: 1.2rem; }
+        .product-old-price { text-decoration: line-through; color: #999; font-size: 0.85rem; margin-left: 8px; }
+        .product-discount { color: #ff4757; font-size: 0.8rem; font-weight: 600; margin-left: 8px; }
+        .rating { color: #ffc107; margin: 8px 0; font-size: 0.85rem; }
+        .rating-count { color: #999; margin-left: 5px; }
+        .footer { background: #1a1a2e; color: white; padding: 4rem 0 2rem; margin-top: 3rem; }
+        .footer a { color: #aaa; text-decoration: none; transition: color 0.3s; }
+        .footer a:hover { color: #ffd700; }
+        .social-icons a { display: inline-block; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; text-align: center; line-height: 40px; margin-right: 10px; transition: all 0.3s; }
+        .social-icons a:hover { background: #ffd700; transform: translateY(-3px); color: #1a1a2e; }
+        .toast-notification { position: fixed; bottom: 20px; right: 20px; z-index: 9999; animation: slideInRight 0.5s; min-width: 300px; }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @media (max-width: 768px) { .search-bar { width: 100%; margin: 1rem 0; } .hero h1 { font-size: 2rem; } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="/">Shop<span>Ease</span></a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="search-bar mx-auto" action="/products" method="get">
+                <input type="text" name="keyword" placeholder="Search for products, brands and more...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            
+            <div class="nav-icons">
+                <a href="/"><i class="fas fa-home"></i></a>
+                <a href="/products"><i class="fas fa-th-large"></i></a>
+                <a href="/wishlist" class="position-relative">
+                    <i class="fas fa-heart"></i>
+                    <span class="wishlist-count" id="wishlistCount">0</span>
+                </a>
+                <a href="/cart" class="position-relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" id="userDropdown">
+                        <li><a class="dropdown-item" href="/login"><i class="fas fa-sign-in-alt"></i> Login / Register</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content">
+                <h1>Welcome to ShopEase</h1>
+                <p class="lead">Your one-stop destination for amazing products at unbeatable prices!</p>
+                <div class="d-flex gap-3">
+                    <a href="/products" class="btn btn-light btn-lg">Shop Now <i class="fas fa-arrow-right"></i></a>
+                    <a href="/products" class="btn btn-outline-light btn-lg">View Offers <i class="fas fa-tag"></i></a>
+                </div>
+                <div class="mt-4">
+                    <i class="fas fa-truck"></i> Free Shipping &nbsp;&nbsp;
+                    <i class="fas fa-shield-alt"></i> Secure Payment &nbsp;&nbsp;
+                    <i class="fas fa-undo-alt"></i> 30 Day Returns
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <div style="background: rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem;">
+                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400" alt="Summer Sale" style="max-width: 100%; border-radius: 15px;">
+                    <h3 class="mt-2">Big Summer Sale!</h3>
+                    <p>Up to 70% off on selected items</p>
+                    <p>Use Code: <strong>SHOPEASE70</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="category-section">
+    <div class="container">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="row g-4" id="categoryContainer">
+            <!-- Categories will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <h2 class="section-title">Trending Products 🔥</h2>
+    <div class="row" id="productsContainer">
+        <!-- Products will be loaded here -->
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h4>ShopEase</h4>
+                <p>Your trusted shopping partner since 2024</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/products">Shop</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h5>Customer Service</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns & Exchanges</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h5>Newsletter</h5>
+                <p>Subscribe to get exclusive offers!</p>
+                <div class="input-group">
+                    <input type="email" id="newsletterEmail" class="form-control" placeholder="Your email">
+                    <button class="btn btn-warning" onclick="subscribeNewsletter()">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        <hr class="mt-4" style="border-color: rgba(255,255,255,0.1);">
+        <div class="text-center">
+            <p>&copy; 2024 ShopEase. All rights reserved. | Designed with <i class="fas fa-heart" style="color: #ff4757;"></i> for you</p>
+        </div>
+    </div>
+</footer>
+
+<div id="toastContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let cart = [];
+    let wishlist = [];
+    
+    function updateCartCount() { 
+        $.get('/api/cart/count', function(count) { $('#cartCount').text(count || 0); });
+    }
+    
+    function updateWishlistCount() { 
+        $.get('/api/wishlist/count', function(count) { $('#wishlistCount').text(count || 0); });
+    }
+    
+    function showToast(title, message, type) {
+        const bg = type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8';
+        const toast = $(`<div class="toast-notification"><div class="toast show"><div class="toast-header" style="background:${bg};color:white"><strong>${title}</strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body">${message}</div></div></div>`);
+        $('#toastContainer').append(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    
+    function addToCart(productId) {
+        $.post('/cart/add', {productId: productId, quantity: 1}, function(response) {
+            if(response.success) {
+                showToast('Success', 'Product added to cart!', 'success');
+                updateCartCount();
+            } else {
+                showToast('Error', response.message || 'Failed to add', 'error');
+            }
+        }).fail(function() {
+            showToast('Error', 'Please login to add to cart', 'error');
+        });
+    }
+    
+    function addToWishlist(productId) {
+        $.post('/wishlist/add', {productId: productId}, function(response) {
+            if(response.success) {
+                showToast('Wishlist', 'Added to wishlist!', 'success');
+                updateWishlistCount();
+            }
+        }).fail(function() {
+            showToast('Error', 'Please login to add to wishlist', 'error');
+        });
+    }
+    
+    function loadCategories() {
+        let categories = ['Fashion', 'Footwear', 'Electronics', 'Home Decor', 'Jewellery', 'Accessories', 'Beauty', 'Stationery'];
+        let icons = ['fa-tshirt', 'fa-shoe-prints', 'fa-mobile-alt', 'fa-home', 'fa-gem', 'fa-clock', 'fa-face-smile', 'fa-book'];
+        let html = '';
+        for(let i=0; i<categories.length; i++) {
+            html += `<div class="col-md-3 col-6"><div class="category-card" onclick="location.href='/products?category=${categories[i]}'"><div class="category-icon"><i class="fas ${icons[i]}"></i></div><h6>${categories[i]}</h6><small class="text-muted">Starting ₹199</small></div></div>`;
+        }
+        $('#categoryContainer').html(html);
+    }
+    
+    function loadProducts() {
+        $.get('/api/products', function(products) {
+            let html = '';
+            products.forEach(p => {
+                let stars = '';
+                for(let i=1; i<=5; i++) stars += i <= p.rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                html += `
+                    <div class="col-md-4 col-lg-3">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="${p.imageUrl || 'https://placehold.co/300x300?text=Product'}" alt="${p.name}">
+                                <div class="product-actions">
+                                    <button onclick="addToWishlist(${p.id})"><i class="far fa-heart"></i></button>
+                                    <button onclick="showToast('Quick View', '${p.name}', 'info')"><i class="fas fa-eye"></i></button>
+                                </div>
+                                ${p.discountPercent > 0 ? `<div class="discount-badge">-${p.discountPercent}%</div>` : ''}
+                            </div>
+                            <div class="product-info">
+                                <div class="product-brand"><i class="fas fa-tag"></i> ${p.brand || 'Brand'}</div>
+                                <h6 class="product-title">${p.name}</h6>
+                                <div class="rating">${stars} <span class="rating-count">(${p.ratingCount || 0})</span></div>
+                                <div class="product-price">
+                                    ₹${(p.finalPrice || p.price).toLocaleString()}
+                                    ${p.discountPercent > 0 ? `<span class="product-old-price">₹${p.price.toLocaleString()}</span><span class="product-discount">${p.discountPercent}% off</span>` : ''}
+                                </div>
+                                <button class="btn btn-primary w-100 mt-2" onclick="addToCart(${p.id})"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#productsContainer').html(html);
+        });
+    }
+    
+    function checkLoginStatus() {
+        fetch('/api/user-status').then(res=>res.json()).then(data=>{
+            if(data.loggedIn){
+                let adminMenu = data.isAdmin ? '<li><a class="dropdown-item" href="/admin"><i class="fas fa-chart-line"></i> Admin Dashboard</a></li>' : '';
+                $('#userDropdown').html(`
+                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a class="dropdown-item" href="/orders"><i class="fas fa-box"></i> My Orders</a></li>
+                    <li><a class="dropdown-item" href="/wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
+                    <li><a class="dropdown-item" href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                    <li><a class="dropdown-item" href="/notifications"><i class="fas fa-bell"></i> Notifications</a></li>
+                    <li><a class="dropdown-item" href="/settings"><i class="fas fa-gear"></i> Settings</a></li>
+                    ${adminMenu}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                `);
+            }
+        });
+    }
+    
+    function subscribeNewsletter() {
+        let email = $('#newsletterEmail').val();
+        if(email) {
+            showToast('Subscribed!', 'Thank you for subscribing!', 'success');
+            $('#newsletterEmail').val('');
+        }
+    }
+    
+    $(document).ready(function() {
+        loadCategories();
+        loadProducts();
+        updateCartCount();
+        updateWishlistCount();
+        checkLoginStatus();
+    });
+</script>
+</body>
+</html>
