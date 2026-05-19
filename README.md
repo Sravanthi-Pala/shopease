@@ -111,3 +111,15 @@ git clone https://github.com/Sravanthi-Pala/shopease.git
 cd shopease
 ./mvnw spring-boot:run
 ```
+---
+
+## 👩‍💻 Author
+
+**Sravanthi Pala**  
+B.Tech CSE Student | Java Full Stack Developer
+
+- 💻 GitHub: https://github.com/Sravanthi-Pala
+- 🔗 LinkedIn: https://www.linkedin.com/in/sravanthi-pala-65a22b347/
+- 🌐 Live Demo: https://shopease-0cxt.onrender.com
+
+---
