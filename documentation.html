@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEase - Technology Architecture Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        /* Table Styles */
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tech-table thead tr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .tech-table th,
+        .tech-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tech-table tbody tr:hover {
+            background: #f8f9ff;
+            transition: 0.3s;
+        }
+
+        .tech-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badge Styles */
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .badge-dev {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-prod {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .badge-cloud {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        /* Flow Graph */
+        .flow-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .step-box {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .step-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .step-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .step-title {
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .step-desc {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .layer {
+            width: 100%;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .layer-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .components {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .component {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 150px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .component:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .component-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .component-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .component-desc {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .arrow-down {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        /* Database Flow */
+        .db-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .db-box {
+            text-align: center;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            min-width: 250px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .db-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .db-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .db-env {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin: 10px 0;
+        }
+
+        .db-dev {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .db-prod {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        /* Deployment Flow */
+        .deployment-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .deploy-step {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            min-width: 180px;
+            transition: all 0.3s;
+        }
+
+        .deploy-step:hover {
+            transform: translateY(-5px);
+        }
+
+        .deploy-icon {
+            font-size: 3em;
+        }
+
+        /* Colorful Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .tech-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .tech-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .step-box {
+                min-width: 100%;
+            }
+            
+            .arrow {
+                display: none;
+            }
+            
+            .tech-table th,
+            .tech-table td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Print styles for screenshot */
+        @media print {
+            body {
+                background: white;
+                padding: 20px;
+            }
+            
+            .card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .step-box, .component, .db-box {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛍️ ShopEase - Architecture Overview</h1>
+            <p>Complete Technology Stack & System Flow Documentation</p>
+        </div>
+
+        <!-- Technology Stack Table -->
+        <div class="card">
+            <h2 class="section-title">📊 Technology Stack</h2>
+            <table class="tech-table">
+                <thead>
+                    <tr><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>🎨 <strong>Thymeleaf</strong></td><td>3.1.2</td><td>Server-side template engine - renders HTML views</td></tr>
+                    <tr><td>🌐 <strong>HTML5/CSS3</strong></td><td>Latest</td><td>Structure & styling</td></tr>
+                    <tr><td>🎯 <strong>Bootstrap 5</strong></td><td>5.3.0</td><td>Responsive design, UI components</td></tr>
+                    <tr><td>⚡ <strong>JavaScript</strong></td><td>ES6+</td><td>Client-side interactivity</td></tr>
+                    <tr><td>☕ <strong>Spring Boot</strong></td><td>3.1.5</td><td>Main framework - auto-configuration, dependency injection</td></tr>
+                    <tr><td>📦 <strong>Spring Data JPA</strong></td><td>3.1.5</td><td>Database operations, object-relational mapping</td></tr>
+                    <tr><td>🔐 <strong>Hibernate</strong></td><td>6.2.13</td><td>JPA implementation, manages database entities</td></tr>
+                    <tr><td>📚 <strong>Maven</strong></td><td>3.9+</td><td>Dependency management & build tool</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Database Configuration Table -->
+        <div class="card">
+            <h2 class="section-title">🗄️ Database Configuration</h2>
+            <table class="tech-table">
+                <thead>
+                    <tr><th>Database</th><th>Environment</th><th>Purpose</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🐬 <strong>MySQL</strong></td>
+                        <td><span class="badge badge-dev">Local Development</span></td>
+                        <td>Lightweight development database for local testing</td>
+                        <td>✅ Active</td>
+                    </tr>
+                    <tr>
+                        <td>🐘 <strong>PostgreSQL</strong></td>
+                        <td><span class="badge badge-prod">Production (Render)</span></td>
+                        <td>Scalable cloud database for live deployment</td>
+                        <td>✅ Active</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Platform Table -->
+        <div class="card">
+            <h2 class="section-title">☁️ Deployment Platform</h2>
+            <table class="tech-table">
+                <thead>
+                    <tr><th>Platform</th><th>Purpose</th><th>Features</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>📂 <strong>GitHub</strong></td>
+                        <td>Version control, source code hosting</td>
+                        <td>Git repositories, CI/CD, collaboration</td>
+                    </tr>
+                    <tr>
+                        <td>🚀 <strong>Render</strong></td>
+                        <td>Cloud deployment, auto-builds from GitHub</td>
+                        <td>Auto-deploy, PostgreSQL hosting, SSL certificates</td>
+                    </tr>
+                    <tr>
+                        <td>🐳 <strong>Docker</strong></td>
+                        <td>Containerization for consistent deployment</td>
+                        <td>Containerization, environment consistency</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Request Flow Graph -->
+        <div class="card">
+            <h2 class="section-title">🔄 Request Flow Diagram</h2>
+            <div class="flow-container">
+                <div class="flow-step">
+                    <div class="step-box">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">👤</div>
+                        <div class="step-title">User Action</div>
+                        <div class="step-desc">Clicks "Add to Cart" or browses products</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">📡</div>
+                        <div class="step-title">HTTP Request</div>
+                        <div class="step-desc">Browser sends POST/GET request to server</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">🎮</div>
+                        <div class="step-title">Controller</div>
+                        <div class="step-desc">Receives request & maps to handler method</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-box">
+                        <div class="step-number">4</div>
+                        <div class="step-icon">⚙️</div>
+                        <div class="step-title">Service Layer</div>
+                        <div class="step-desc">Processes business logic & validation</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-number">5</div>
+                        <div class="step-icon">💾</div>
+                        <div class="step-title">Repository</div>
+                        <div class="step-desc">Performs database CRUD operations</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-number">6</div>
+                        <div class="step-icon">🗄️</div>
+                        <div class="step-title">Database</div>
+                        <div class="step-desc">Stores/retrieves data (MySQL/PostgreSQL)</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-box">
+                        <div class="step-number">7</div>
+                        <div class="step-icon">🎨</div>
+                        <div class="step-title">View Template</div>
+                        <div class="step-desc">Thymeleaf renders HTML with data</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-number">8</div>
+                        <div class="step-icon">🌐</div>
+                        <div class="step-title">HTTP Response</div>
+                        <div class="step-desc">Returns rendered page to browser</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step-box">
+                        <div class="step-number">9</div>
+                        <div class="step-icon">✅</div>
+                        <div class="step-title">User View</div>
+                        <div class="step-desc">Updated page with dynamic content</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Layers -->
+        <div class="card">
+            <h2 class="section-title">🏗️ MVC Architecture</h2>
+            <div class="architecture">
+                <div class="layer">
+                    <div class="layer-title">📱 PRESENTATION LAYER (View)</div>
+                    <div class="components">
+                        <div class="component"><div class="component-icon">🎨</div><div class="component-name">Thymeleaf Templates</div><div class="component-desc">HTML/CSS/JS</div></div>
+                        <div class="component"><div class="component-icon">📱</div><div class="component-name">Responsive UI</div><div class="component-desc">Bootstrap 5</div></div>
+                        <div class="component"><div class="component-icon">⚡</div><div class="component-name">Client Scripts</div><div class="component-desc">JavaScript</div></div>
+                    </div>
+                </div>
+                <div class="arrow-down">▼</div>
+                <div class="layer">
+                    <div class="layer-title">🎮 CONTROLLER LAYER</div>
+                    <div class="components">
+                        <div class="component"><div class="component-icon">🏠</div><div class="component-name">HomeController</div><div class="component-desc">Page routing</div></div>
+                        <div class="component"><div class="component-icon">📦</div><div class="component-name">ProductController</div><div class="component-desc">Product CRUD</div></div>
+                        <div class="component"><div class="component-icon">🛒</div><div class="component-name">CartController</div><div class="component-desc">Cart operations</div></div>
+                        <div class="component"><div class="component-icon">📋</div><div class="component-name">OrderController</div><div class="component-desc">Order processing</div></div>
+                    </div>
+                </div>
+                <div class="arrow-down">▼</div>
+                <div class="layer">
+                    <div class="layer-title">⚙️ SERVICE LAYER (Business Logic)</div>
+                    <div class="components">
+                        <div class="component"><div class="component-icon">🔧</div><div class="component-name">ProductService</div><div class="component-desc">Product logic</div></div>
+                        <div class="component"><div class="component-icon">🛒</div><div class="component-name">CartService</div><div class="component-desc">Cart calculations</div></div>
+                        <div class="component"><div class="component-icon">📦</div><div class="component-name">OrderService</div><div class="component-desc">Order validation</div></div>
+                    </div>
+                </div>
+                <div class="arrow-down">▼</div>
+                <div class="layer">
+                    <div class="layer-title">💾 DATA ACCESS LAYER (Repository)</div>
+                    <div class="components">
+                        <div class="component"><div class="component-icon">🗄️</div><div class="component-name">ProductRepository</div><div class="component-desc">JPA CRUD</div></div>
+                        <div class="component"><div class="component-icon">🛒</div><div class="component-name">CartRepository</div><div class="component-desc">JPA CRUD</div></div>
+                        <div class="component"><div class="component-icon">📋</div><div class="component-name">OrderRepository</div><div class="component-desc">JPA CRUD</div></div>
+                    </div>
+                </div>
+                <div class="arrow-down">▼</div>
+                <div class="layer">
+                    <div class="layer-title">🗄️ DATABASE LAYER</div>
+                    <div class="components">
+                        <div class="component"><div class="component-icon">🐬</div><div class="component-name">MySQL (Dev)</div><div class="component-desc">Local development</div></div>
+                        <div class="component"><div class="component-icon">🐘</div><div class="component-name">PostgreSQL (Prod)</div><div class="component-desc">Render cloud</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Flow -->
+        <div class="card">
+            <h2 class="section-title">🔄 Database Migration Flow</h2>
+            <div class="db-flow">
+                <div class="db-box">
+                    <div class="db-icon">💻</div>
+                    <div class="db-name">Local Development</div>
+                    <div class="db-env db-dev">MySQL Database</div>
+                    <div class="step-desc">localhost:3306/shopease_db</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="db-box">
+                    <div class="db-icon">📤</div>
+                    <div class="db-name">Git Push</div>
+                    <div class="db-env db-dev">Code Commit</div>
+                    <div class="step-desc">Push to GitHub main branch</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="db-box">
+                    <div class="db-icon">🚀</div>
+                    <div class="db-name">Render Deploy</div>
+                    <div class="db-env db-prod">Auto Build & Deploy</div>
+                    <div class="step-desc">Docker container starts</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="db-box">
+                    <div class="db-icon">🐘</div>
+                    <div class="db-name">Production</div>
+                    <div class="db-env db-prod">PostgreSQL Cloud</div>
+                    <div class="step-desc">render.com database</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment Process -->
+        <div class="card">
+            <h2 class="section-title">🚀 Deployment Pipeline</h2>
+            <div class="deployment-flow">
+                <div class="deploy-step">
+                    <div class="deploy-icon">💻</div>
+                    <div class="step-title">Local Code</div>
+                    <div class="step-desc">Write & test locally</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="deploy-step">
+                    <div class="deploy-icon">📂</div>
+                    <div class="step-title">Git Commit</div>
+                    <div class="step-desc">git add & commit</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="deploy-step">
+                    <div class="deploy-icon">☁️</div>
+                    <div class="step-title">GitHub Push</div>
+                    <div class="step-desc">git push origin main</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="deploy-step">
+                    <div class="deploy-icon">🤖</div>
+                    <div class="step-title">Render Auto-Deploy</div>
+                    <div class="step-desc">Automatic build & deploy</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="deploy-step">
+                    <div class="deploy-icon">🌍</div>
+                    <div class="step-title">Live Site</div>
+                    <div class="step-desc">https://shopease.onrender.com</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Features Grid -->
+        <div class="card">
+            <h2 class="section-title">✨ Technology Features</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-icon">☕</div>
+                    <div class="step-title">Spring Boot</div>
+                    <div class="step-desc">Auto-configuration, embedded server, production-ready features</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📊</div>
+                    <div class="step-title">JPA/Hibernate</div>
+                    <div class="step-desc">Object-relational mapping, automatic schema generation</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🎨</div>
+                    <div class="step-title">Thymeleaf</div>
+                    <div class="step-desc">Natural templating, Spring integration, internationalization</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🐳</div>
+                    <div class="step-title">Docker</div>
+                    <div class="step-desc">Containerization, consistent environments, easy deployment</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🐘</div>
+                    <div class="step-title">PostgreSQL</div>
+                    <div class="step-desc">ACID compliance, advanced queries, scalability</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🚀</div>
+                    <div class="step-title">Render</div>
+                    <div class="step-desc">GitOps deployment, auto SSL, horizontal scaling</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h3>📌 ShopEase - Production Ready E-Commerce Platform</h3>
+            <p style="margin-top: 10px;">Built with Spring Boot | Deployed on Render | Database: PostgreSQL</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">🔗 Live Demo: https://shopease-0cxt.onrender.com</p>
+        </div>
+    </div>
+</body>
+</html>
